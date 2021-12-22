@@ -1,16 +1,25 @@
-import { Schema,model } from "mongoose";
+import { Schema, model, ObjectId } from "mongoose";
 
 const creditSchema = new Schema(
     {
-        deudaTotal:{type: Number},
-        deudaRestante:{type: Number},
-        fechaCredito:{type: Date},
-        state: {type: String, default:'E'},
-        idClient: {type: Schema.Types.ObjectId, ref:'Client'},
-        cuots: [{
-            amount: {type: Number},
-            fecha:{type: Date}
-        }]
+        tipo: { type: String },
+        valor: { type: Number, required: true },
+        tiempo: { type: Number, required: true },
+        tasa: { type: Number, required: true },
+        state: { type: Boolean, default: true },
+        Solicitudes: { type: Number },
+        CreditosAprobados: [
+            {
+                idUser: { type: ObjectId, ref: 'User' },
+                state: { type: Boolean }
+            }
+        ],
+        CreditosRechazados: [
+            {
+                idUser: { type: ObjectId, ref: 'User' },
+                state: { type: Boolean }
+            }
+        ]
     },
 );
 

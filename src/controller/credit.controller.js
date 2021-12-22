@@ -1,9 +1,10 @@
-import CreditModel from '../model/credit.model'
+import CreditModel from '../model/credit.model';
+import UserModel from './../model/user.model';
 
+//Crear
 const addCredit = async (req, res) => {
     try {
         const body = req.body;
-        console.log(body);
         const credit = new CreditModel(body);
         credit.save();
         return res.json({ status: true, dates: credit });
@@ -11,45 +12,65 @@ const addCredit = async (req, res) => {
         return res.json({ status: false, errors: e.message });
     }
 }
-
-const getCredits = async (req, res) =>{
-    try{
-        const data = await CreditModel.find({}).
-        populate('idClient');
+//mostrar
+const getCredits = async (req, res) => {
+    try {
+        const data = await CreditModel.find({})
+            .populate('CreditosAprobados.idUser')
+            .populate('CreditosRechazados.idUser');
         console.log(data);
-        return res.json({status: true, items: data});
-    }catch(e){
-        return res.json({status: false, errors: e.message});
+        return res.json({ status: true, items: data });
+    } catch (e) {
+        return res.json({ status: false, errors: e.message });
     }
 }
 
-const getCreditById = async (req, res) =>{
-    try{
-        
-        let paramas =req.params;
-        const data = await CreditModel.findById(paramas.id).
-        populate('idClient');
+//mostrar por Id
+const getCreditById = async (req, res) => {
+    try {
+        let paramas = req.params;
+        const data = await CreditModel.findById(paramas.creditId)
+            .populate('CreditosAprobados.idUser')
+            .populate('CreditosRechazados.idUser');
         console.log(data);
-        return res.json({status: true, items: data});
-    }catch(e){
-        return res.json({status: false, errors: e.message});
+        return res.json({ status: true, items: data });
+    } catch (e) {
+        return res.json({ status: false, errors: e.message });
     }
 }
 
-
-const manageCredits = async (req, res) =>{
-    console.log(req.body);
-    try{ 
+//actualizar
+const manageCredits = async (req, res) => {
+    try {
         const body = req.body;
-        const params = req.query;
-        await CreditModel.findByIdAndUpdate(params.id, body);
-        return res.json({status: true})
-    }catch(e){
-        return res.json({status: false, errors: e.message});
+        const params = req.params;
+        await CreditModel.findByIdAndUpdate(params.creditId, body);
+        return res.json({ status: true })
+    } catch (e) {
+        return res.json({ status: false, errors: e.message });
     }
 }
 
-const manageCuotas = async (req, res) =>{
-}
+const remove = async (req, res) => {
+    try {
+        const params = req.params;
+        await CreditModel.findByIdAndDelete(params.creditId);
+        return res.json({ status: true });
+    } catch (err) {
+        return res.json({ status: false, errors: err.message });
+    }
+};
 
-export {addCredit, getCredits, manageCredits};
+// const solicitarCredito = async (req, res) => {
+//     try {
+
+
+//     } catch (e) {
+//         return res.json({ status: false, errors: e.message });
+//     }
+// };
+
+// const manageCuotas = async (req, res) => {
+// }
+
+export { addCredit, getCredits, manageCredits, getCreditById, remove };

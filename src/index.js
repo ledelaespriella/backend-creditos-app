@@ -2,22 +2,23 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import ClientRouter from './router/client.router'
-import CreditRouter from './router/credit.router';
+import UserRoutes from './routes/user.routes'
+import CreditRoutes from './routes/credit.routes';
 
 const app = express();
 dotenv.config();
 
 const main = async () => {
-  await mongoose.connect(process.env.URL_DB);
+  await mongoose.connect(process.env.URL_DB)
+    .then(() => { console.log('Connect to database') });
   app.use(express.json());
   app.use(cors());
   app.get('/', (req, res) => {
     res.send('Hello World Julian!');
   });
 
-  app.use('/api', ClientRouter);
-  app.use('/api', CreditRouter);
+  app.use('/api', UserRoutes);
+  app.use('/api', CreditRoutes);
 
   app.listen(process.env.PORT, () => {
     console.log(

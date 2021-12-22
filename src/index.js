@@ -1,23 +1,30 @@
-window.addEventListener("load", function() {
+import dotenv from 'dotenv';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import UserRoutes from './routes/user.routes'
+import CreditRoutes from './routes/credit.routes';
 
-    // icono para mostrar contraseña
-    showPassword = document.querySelector('.show-password');
-    showPassword.addEventListener('click', () => {
+const app = express();
+dotenv.config();
 
-        // elementos input de tipo clave
-        password1 = document.querySelector('.password1');
-        password2 = document.querySelector('.password2');
+const main = async () => {
+  await mongoose.connect(process.env.URL_DB)
+    .then(() => { console.log('Connect to database') });
+  app.use(express.json());
+  app.use(cors());
+  app.get('/', (req, res) => {
+    res.send('Hello World Julian!');
+  });
 
-        if ( password1.type === "text" ) {
-            password1.type = "password"
-            password2.type = "password"
-            showPassword.classList.remove('fa-eye-slash');
-        } else {
-            password1.type = "text"
-            password2.type = "text"
-            showPassword.classList.toggle("fa-eye-slash");
-        }
+  app.use('/api', UserRoutes);
+  app.use('/api', CreditRoutes);
 
-    })
+  app.listen(process.env.PORT, () => {
+    console.log(
+      `Example app listening at http://localhost:${process.env.PORT}`
+    );
+  });
+};
 
-});
+main().catch((err) => console.log(err));

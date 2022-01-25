@@ -1,25 +1,13 @@
-import { Schema, model, ObjectId } from "mongoose";
+import { Schema, model} from "mongoose";
 
 const creditSchema = new Schema(
     {
-        tipo: { type: String },
+        tipo: { type: String , default:"Leasing" },
         valor: { type: Number, required: true },
         tiempo: { type: Number, required: true },
         tasa: { type: Number, required: true },
-        state: { type: Boolean, default: true },
-        Solicitudes: { type: Number },
-        CreditosAprobados: [
-            {
-                idUser: { type: ObjectId, ref: 'User' },
-                state: { type: Boolean }
-            }
-        ],
-        CreditosRechazados: [
-            {
-                idUser: { type: ObjectId, ref: 'User' },
-                state: { type: Boolean }
-            }
-        ]
+        idUser: { type: Schema.Types.ObjectId, ref: 'User' },
+        state: { type: String, default: "Pendiente" },
     },
 );
 

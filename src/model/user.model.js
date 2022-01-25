@@ -1,4 +1,4 @@
-import { Schema, model, ObjectId } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
   names: { type: String, required: true },
@@ -15,17 +15,22 @@ const UserSchema = new Schema({
   valorDisponible: { type: Number },
   creditos: [
     {
-      idCredito: { type: ObjectId, ref: 'Credit' },
-      valorCapital: { type: Number },
-      deudaTotal: { type: Number },
-      valorInteres: { type: Number },
-      valorCuota: { type: Number },
-      cuotasPendientes: { type: Number },
+      idCredito: { type: Schema.Types.ObjectId, ref: 'Credit' },
+      cuotas: [
+        {
+          noCuota:{type: Number},
+          valorCapital: { type: Number },
+          deudaTotal: { type: Number },
+          valorInteres: { type: Number },
+          valorCuota: { type: Number },
+        },
+      ],
       state: { type: String }
     },
   ],
   prorrogas: [
     {
+      idCredito: { type: Schema.Types.ObjectId, ref: 'Credit' },
       motivos: { type: String },
       cuotasAplazar: { type: Number, default: 6 },
       state: { type: String }

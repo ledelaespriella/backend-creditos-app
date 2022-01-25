@@ -1,4 +1,6 @@
 import UserModel from './../model/user.model';
+import CreditModel from './../model/credit.model';
+
 import { hashSync, compareSync } from 'bcrypt';
 import { sign, decode } from 'jsonwebtoken';
 
@@ -7,6 +9,7 @@ const register = async (req, res) => {
   try {
     const body = req.body;
     body.password = hashSync(body.password, 10);
+    body.valorDisponible = (body.expenses / body.incomes);
     const user = new UserModel(body);
     await user.save();
     return res.json({ status: true });
@@ -75,5 +78,31 @@ const getUser = async (req, res) => {
   }
 }
 
+const solicitarCredito = async (req, res) => {
 
-export { register, login, update, remove, getUser };
+  try {
+    const user = req.user;
+    const body = req.body;
+    body.idUser = user.id;
+    const credit = new CreditModel(body);
+    await credit.save();
+    return res.json({ status: true });
+  } catch (e) {
+    return res.json({ status: false, errors: e.message });
+  }
+
+}
+
+const paymentHistory = async (req, res) => {
+
+  try {
+    
+
+    return res.json({ status: true });
+  } catch (e) {
+    return res.json({ status: false, errors: e.message });
+  }
+
+}
+
+export { register, login, update, remove, getUser, solicitarCredito };

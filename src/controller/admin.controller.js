@@ -1,4 +1,4 @@
-import UserModel from './../model/user.model';
+import AdminModel from './../model/admin.model';
 import { hashSync, compareSync } from 'bcrypt';
 import { sign, decode } from 'jsonwebtoken';
 
@@ -7,7 +7,7 @@ const register = async (req, res) => {
     const body = req.body;
     console.log(body);
     body.password = hashSync(body.password, 10);
-    const user = new UserModel(body);
+    const user = new AdminModel(body);
     await user.save();
     return res.json({ status: true });
   } catch (e) {
@@ -18,14 +18,20 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const body = req.body;
-    const verify = await UserModel.findOne({ email: body.email, state: true });
+    const verify = await AdminModel.findOne({ email: body.email, state: true });
     console.log(verify);
     if (verify) {
       if (compareSync(body.password, verify.password)) {
         const token = sign(
           {
             exp: Math.floor(Date.now() / 1000) + 60 * 30,
-            data: { id: verify._id, name: verify.names, email: verify.email, identificacion: verify.identificacion },
+            data: {
+              id: verify._id,
+              name: verify.names,
+              lastName: verify.lastName,
+              email: verify.email,
+              rol: verify.rol,
+            },
           },
           process.env.JWT_SECRET
         );
@@ -47,27 +53,17 @@ const update = async (req, res) => {
   try {
     const params = req.params;
     const body = req.body;
-    await UserModel.findByIdAndUpdate(params.userId, body);
+    console.log(body);
+    await AdminModel.findByIdAndUpdate(params.id, body);
     return res.json({ status: true });
   } catch (ex) {
     return res.json({ status: false, errors: ex.message });
   }
 };
 
-const remove = async (req, res) => {
-  try {
-    const params = req.params;
-    await UserModel.findByIdAndDelete(params.userId);
-    return res.json({ status: true });
-  } catch (err) {
-    return res.json({ status: false, errors: err.message });
-  }
+const getAdmin = (req, res) => {
+  const admin = req.user;
+  return res.json({ status: true, item: admin });
 };
 
-const getUser = async (req, res) => {
-  const data = req.user;
-  return res.json({ status: true, items: data });
-   
-}
-
-export { register, login, update, remove, getUser };
+export { register, login, getAdmin, update };

@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import UserRoutes from './routes/user.routes'
 import CreditRoutes from './routes/credit.routes';
+import AdminRoutes from './routes/admin.routes';
 
 const app = express();
 dotenv.config();
@@ -19,6 +20,7 @@ const main = async () => {
 
   app.use('/api', UserRoutes);
   app.use('/api', CreditRoutes);
+  app.use('/api', AdminRoutes)
 
   app.listen(process.env.PORT, () => {
     console.log(

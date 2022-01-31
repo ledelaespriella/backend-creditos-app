@@ -9,12 +9,10 @@ import {
 
 const app = Router();
 
-app.post('/credit/', addCredit);
+app.post('/credit', addCredit);
 app.put('/credit/:creditId', manageCredits);
 app.get('/credit/getAll', getCredits);
 app.get('/credit/:creditId', getCreditById);
 app.delete('/credit/:creditId', remove);
-
-
 
 export default app;

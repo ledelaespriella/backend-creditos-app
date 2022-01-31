@@ -9,8 +9,9 @@ authMiddleware.use((req, res, next) => {
   if (token) {
     verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) return res.json({ status: false, errors: 'Token inválido' });
-
       req.user = decoded;
+      console.log(req.user);
+      console.log('Este es el middleware');
       next();
     });
   } else {
